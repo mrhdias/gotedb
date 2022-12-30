@@ -2,7 +2,7 @@
 // Copyright 2022 The GoTeDB Authors. All rights reserved.
 // Use of this source code is governed by a MIT License
 // license that can be found in the LICENSE file.
-// Last Modification: 2022-12-30 21:51:29
+// Last Modification: 2022-12-30 21:56:49
 //
 
 package tedb
@@ -163,7 +163,7 @@ func (tedb TEDB) VatSearchResult(countryCodes []string,
 	for _, countryCode := range countryCodes {
 		ccId, ok := tedb.CountryCodes[countryCode]
 		if !ok {
-			fmt.Println("Error")
+			return nil, fmt.Errorf("the country code \"%s\" is invalid", countryCode)
 		}
 		values.Add("selectedMemberStates", strconv.Itoa(ccId))
 	}
