@@ -10,32 +10,33 @@ go get github.com/mrhdias/gotedb
 package main
 
 import (
-	"fmt"
-	"log"
-	"time"
+    "fmt"
+    "log"
+    "time"
 
-	tedb "github.com/mrhdias/gotedb"
+    tedb "github.com/mrhdias/gotedb"
 )
 
 func main() {
 
-	service := tedb.NewVatRetrievalService("./tedb_cache", true)
+    service := tedb.NewVatRetrievalService("./tedb_cache", true)
 
-	currentTime := time.Now()
+    currentTime := time.Now()
 
-	records, err := service.VatSearch([]string{"ES"},
-		currentTime.AddDate(0, 0, -1).Format("2006/01/02"),
-		currentTime.Format("2006/01/02"),
-		[]string{"33049900"})
+    records, err := service.VatSearch([]string{"ES"},
+        currentTime.AddDate(0, 0, -1).Format("2006/01/02"),
+        currentTime.Format("2006/01/02"),
+        []string{"33049900"})
 
-	if err != nil {
-		log.Fatalln(err)
-	}
+    if err != nil {
+        log.Fatalln(err)
+    }
 
-	for _, record := range records {
-		fmt.Println(record.MemberState.DefaultCountryCode)
-		fmt.Println(record.Type)
-		fmt.Println(record.Rate.Key, record.Rate.Value, record.Comments)
-	}
+    for _, record := range records {
+        fmt.Println("Country Code:", record.MemberState.DefaultCountryCode,
+            "Type:", record.Type,
+            "Rate:", record.Rate.Value,
+            "Comments:", record.Comments)
+    }
 }
 ```
