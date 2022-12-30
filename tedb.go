@@ -2,7 +2,7 @@
 // Copyright 2022 The GoTeDB Authors. All rights reserved.
 // Use of this source code is governed by a MIT License
 // license that can be found in the LICENSE file.
-// Last Modification: 2022-12-30 21:20:56
+// Last Modification: 2022-12-30 21:51:29
 //
 
 package tedb
@@ -52,7 +52,7 @@ func SplitCn(commodityCode string) []string {
 func (tedb TEDB) GetCnId(commodityCode string) (int, error) {
 
 	if len(commodityCode) < 4 {
-		fmt.Println("Error")
+		return 0, fmt.Errorf("the commodity code %s is incorrect", commodityCode)
 	}
 
 	heading := commodityCode[0:4]
