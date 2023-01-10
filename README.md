@@ -1,6 +1,8 @@
 # GoTEDB
 VAT Search in TEDB ([Taxes in Europe Database v3](https://ec.europa.eu/taxation_customs/tedb/vatSearchForm.html)) using Golang
 
+The query of goods commodity code can be done in the [TARIC Consultation](https://ec.europa.eu/taxation_customs/dds2/taric/taric_consultation.jsp) page.
+
 ## Installation
 ```
 go get github.com/mrhdias/gotedb
