@@ -19,6 +19,9 @@ import (
 
 func main() {
 
+    fmt.Println("Country Codes:", tedb.CountryCodes)
+    fmt.Println("Categories:", tedb.Categories)
+
     service := tedb.NewVatRetrievalService("./tedb_cache", true)
 
     currentTime := time.Now()
