@@ -288,6 +288,10 @@ func (tedb TEDB) VatSearchResult(criteria Criteria) ([]byte, error) {
 
 	req.URL.RawQuery = values.Encode()
 
+	if tedb.Debug {
+		fmt.Println("RawQuery:", req.URL.RawQuery)
+	}
+
 	client := &http.Client{
 		Timeout: time.Duration(time.Duration(tedb.Timeout).Seconds()),
 	}
