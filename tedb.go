@@ -2,7 +2,7 @@
 // Copyright 2023 The GoTeDB Authors. All rights reserved.
 // Use of this source code is governed by a MIT License
 // license that can be found in the LICENSE file.
-// Last Modification: 2023-01-10 16:51:49
+// Last Modification: 2023-01-10 22:09:39
 //
 
 package tedb
@@ -21,11 +21,12 @@ import (
 )
 
 type TEDB struct {
-	Url            string
-	CacheDir       string
-	CreateCacheDir bool
-	Timeout        int
-	Debug          bool
+	Url             string
+	CacheDir        string
+	CreateCacheDir  bool
+	RegenerateAfter int
+	Timeout         int
+	Debug           bool
 }
 
 type Criteria struct {
@@ -153,25 +154,33 @@ func (tedb TEDB) GetCnId(commodityCode string) (int, error) {
 
 	if tedb.CacheDir != "" {
 		jsonFilepath := filepath.Join(tedb.CacheDir, jsonFilename)
-		if _, err := os.Stat(jsonFilepath); err == nil {
-			contentBytes, err := os.ReadFile(jsonFilepath)
-			if err != nil {
-				return 0, err
-			}
-
-			var records []CodeRecord
-
-			if err := json.Unmarshal([]byte(contentBytes), &records); err != nil {
-				return 0, err
-			}
-
-			for _, record := range records {
-				if strings.EqualFold(record.Code, code) {
-					return record.ID, nil
+		if fileStat, err := os.Stat(jsonFilepath); err == nil {
+			if tedb.RegenerateAfter > 0 && int(time.Since(fileStat.ModTime()).Hours()/24) > tedb.RegenerateAfter {
+				// log.Printf("The %s file has been removed", jsonFilepath)
+				if err := os.Remove(jsonFilepath); err != nil {
+					return 0, err
 				}
-			}
+			} else {
 
-			return 0, nil
+				contentBytes, err := os.ReadFile(jsonFilepath)
+				if err != nil {
+					return 0, err
+				}
+
+				var records []CodeRecord
+
+				if err := json.Unmarshal([]byte(contentBytes), &records); err != nil {
+					return 0, err
+				}
+
+				for _, record := range records {
+					if strings.EqualFold(record.Code, code) {
+						return record.ID, nil
+					}
+				}
+
+				return 0, nil
+			}
 		}
 	}
 
@@ -350,7 +359,11 @@ func (tedb TEDB) VatSearch(criteria Criteria) ([]TEDBVatSearchResult, error) {
 	return records, err
 }
 
-func NewVatRetrievalService(cacheDir string, createCacheDir bool, debugOption ...bool) TEDB {
+func NewVatRetrievalService(cacheDir string,
+	createCacheDir bool,
+	regenerateAfter int,
+	debugOption ...bool) TEDB {
+
 	debug := false
 	if len(debugOption) == 1 {
 		debug = debugOption[0]
@@ -362,6 +375,7 @@ func NewVatRetrievalService(cacheDir string, createCacheDir bool, debugOption ..
 
 	tedb.CacheDir = cacheDir
 	tedb.CreateCacheDir = createCacheDir
+	tedb.RegenerateAfter = regenerateAfter
 	tedb.Timeout = 60
 	tedb.Debug = debug
 
