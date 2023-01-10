@@ -1,8 +1,8 @@
 //
-// Copyright 2022 The GoTeDB Authors. All rights reserved.
+// Copyright 2023 The GoTeDB Authors. All rights reserved.
 // Use of this source code is governed by a MIT License
 // license that can be found in the LICENSE file.
-// Last Modification: 2022-12-30 21:56:49
+// Last Modification: 2023-01-10 12:02:46
 //
 
 package tedb
@@ -23,10 +23,19 @@ import (
 type TEDB struct {
 	Url            string
 	CountryCodes   map[string]int
+	Categories     map[string]int
 	CacheDir       string
 	CreateCacheDir bool
 	Timeout        int
 	Debug          bool
+}
+
+type Criteria struct {
+	CountryCodes   []string
+	DateFrom       string
+	DateTo         string
+	Categories     []string
+	CommodityCodes []string
 }
 
 func SplitCn(commodityCode string) []string {
@@ -145,9 +154,7 @@ func (tedb TEDB) GetCnId(commodityCode string) (int, error) {
 	return 0, nil
 }
 
-func (tedb TEDB) VatSearchResult(countryCodes []string,
-	dateFrom, dateTo string,
-	cnIds []int) ([]byte, error) {
+func (tedb TEDB) VatSearchResult(criteria Criteria) ([]byte, error) {
 
 	url := fmt.Sprintf("%s/vatSearchResult.json", tedb.Url)
 
@@ -160,7 +167,7 @@ func (tedb TEDB) VatSearchResult(countryCodes []string,
 	req.Header.Add("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8")
 
 	values := req.URL.Query()
-	for _, countryCode := range countryCodes {
+	for _, countryCode := range criteria.CountryCodes {
 		ccId, ok := tedb.CountryCodes[countryCode]
 		if !ok {
 			return nil, fmt.Errorf("the country code \"%s\" is invalid", countryCode)
@@ -168,10 +175,23 @@ func (tedb TEDB) VatSearchResult(countryCodes []string,
 		values.Add("selectedMemberStates", strconv.Itoa(ccId))
 	}
 
-	values.Add("dateFrom", dateFrom)
-	values.Add("dateTo", dateTo)
+	values.Add("dateFrom", criteria.DateFrom)
+	values.Add("dateTo", criteria.DateTo)
 
-	for _, cnId := range cnIds {
+	for _, category := range criteria.Categories {
+		if id, ok := tedb.Categories[category]; ok {
+			values.Add("selectedCategories", strconv.Itoa(id))
+		}
+	}
+
+	for _, commodityCode := range criteria.CommodityCodes {
+		cnId, err := tedb.GetCnId(commodityCode)
+		if err != nil {
+			return nil, err
+		}
+		if tedb.Debug {
+			fmt.Println("Commodity Code:", commodityCode, "CnId:", cnId)
+		}
 		values.Add("selectedCnCodes", strconv.Itoa(cnId))
 	}
 
@@ -205,41 +225,33 @@ func (tedb TEDB) VatSearchResult(countryCodes []string,
 	return respContentBytes, nil
 }
 
-func (tedb TEDB) VatSearch(countryCodes []string,
-	dateFrom, dateTo string,
-	commodityCodes []string) ([]TEDBVatSearchResult, error) {
+func (tedb TEDB) VatSearch(criteria Criteria) ([]TEDBVatSearchResult, error) {
 
-	df, err := time.Parse("2006/01/02", dateFrom)
+	if criteria.DateTo == "" {
+		currentTime := time.Now()
+		criteria.DateTo = currentTime.Format("2006/01/02")
+	}
+
+	dt, err := time.Parse("2006/01/02", criteria.DateTo)
 	if err != nil {
 		return nil, err
 	}
 
-	dt, err := time.Parse("2006/01/02", dateTo)
+	if criteria.DateFrom == "" {
+		criteria.DateFrom = dt.AddDate(0, 0, -1).Format("2006/01/02")
+	}
+
+	df, err := time.Parse("2006/01/02", criteria.DateFrom)
 	if err != nil {
 		return nil, err
 	}
 
 	if df.After(dt) {
-		return nil, fmt.Errorf("date from \"%s\" is after date to \"%s\"", dateFrom, dateTo)
+		return nil, fmt.Errorf("date from \"%s\" is after date to \"%s\"",
+			criteria.DateFrom, criteria.DateTo)
 	}
 
-	var cnIds []int
-	for _, commodityCode := range commodityCodes {
-		cnId, err := tedb.GetCnId(commodityCode)
-		if err != nil {
-			return nil, err
-		}
-		if tedb.Debug {
-			fmt.Println("Commodity Code:", commodityCode, "CnId:", cnId)
-		}
-
-		cnIds = append(cnIds, cnId)
-	}
-	if len(cnIds) != len(commodityCodes) {
-		return nil, errors.New("the number of commodity codes differs from the number of id's")
-	}
-
-	result, err := tedb.VatSearchResult(countryCodes, dateFrom, dateTo, cnIds)
+	result, err := tedb.VatSearchResult(criteria)
 	if err != nil {
 		return nil, err
 	}
@@ -265,6 +277,7 @@ func NewVatRetrievalService(cacheDir string, createCacheDir bool, debugOption ..
 	tedb := new(TEDB)
 
 	tedb.Url = "https://ec.europa.eu/taxation_customs/tedb"
+
 	tedb.CountryCodes = map[string]int{
 		"AT": 1,
 		"BE": 2,
@@ -295,6 +308,58 @@ func NewVatRetrievalService(cacheDir string, createCacheDir bool, debugOption ..
 		"SI": 27,
 		"SK": 28,
 		"XI": 30,
+	}
+
+	tedb.Categories = map[string]int{
+		"100_years_old":           288,
+		"accommodation":           262,
+		"agricultural_production": 261,
+		"bicycles_repair":         270,
+		"broadcasting_services":   256,
+		"ceramics":                283,
+		"children_car_seats":      250,
+		"clothing_repair":         272,
+		"cultural_events":         255,
+		"domestic_care":           273,
+		"enamels":                 284,
+		"foodstuffs":              246,
+		"hairdressing":            274,
+		"housing_provision":       258,
+		"impressions":             279,
+		"loan_libraries":          252,
+		"medical_care":            268,
+		"medical_equipment":       249,
+		"newspapers":              253,
+		"parking":                 572,
+		"periodicals":             254,
+		"pharmaceutical_products": 248,
+		"photographs":             285,
+		"pictures":                278,
+		"postage":                 286,
+		"private_dwellings":       259,
+		"region":                  574,
+		"restaurant":              263,
+		"sculpture_casts":         281,
+		"sculptures":              280,
+		"shoes_repair":            271,
+		"social_wellbeing":        266,
+		"sporting_events":         264,
+		"sporting_facilities":     265,
+		"street_cleaning":         269,
+		"super_temporary":         571,
+		"supply_electricity":      276,
+		"supply_gas":              275,
+		"supply_heating":          277,
+		"supply_water":            247,
+		"tapestries":              282,
+		"temporary":               573,
+		"transport_passengers":    251,
+		"undertakers_services":    267,
+		"window_cleaning":         260,
+		"writers_services":        257,
+		"zero_rate":               570,
+		"zero_reduced_rate":       569,
+		"zoological":              287,
 	}
 
 	tedb.CacheDir = cacheDir
