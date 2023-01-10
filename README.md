@@ -1,5 +1,5 @@
 # GoTEDB
-VAT Search in TEDB (Taxes in Europe Database) using Golang
+VAT Search in TEDB ([Taxes in Europe Database v3](https://ec.europa.eu/taxation_customs/tedb/vatSearchForm.html)) using Golang
 
 ## Installation
 ```
