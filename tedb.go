@@ -2,7 +2,7 @@
 // Copyright 2023 The GoTeDB Authors. All rights reserved.
 // Use of this source code is governed by a MIT License
 // license that can be found in the LICENSE file.
-// Last Modification: 2023-01-10 12:02:46
+// Last Modification: 2023-01-10 16:51:49
 //
 
 package tedb
@@ -22,8 +22,6 @@ import (
 
 type TEDB struct {
 	Url            string
-	CountryCodes   map[string]int
-	Categories     map[string]int
 	CacheDir       string
 	CreateCacheDir bool
 	Timeout        int
@@ -36,6 +34,90 @@ type Criteria struct {
 	DateTo         string
 	Categories     []string
 	CommodityCodes []string
+}
+
+var CountryCodes = map[string]int{
+	"AT": 1,
+	"BE": 2,
+	"BG": 3,
+	"CY": 4,
+	"CZ": 5,
+	"DE": 6,
+	"DK": 7,
+	"EE": 8,
+	"EL": 9,
+	"ES": 10,
+	"FI": 11,
+	"FR": 12,
+	// "UK": 13,
+	"HR": 14,
+	"HU": 15,
+	"IE": 16,
+	"IT": 17,
+	"LT": 18,
+	"LU": 19,
+	"LV": 20,
+	"MT": 21,
+	"NL": 22,
+	"PL": 23,
+	"PT": 24,
+	"RO": 25,
+	"SE": 26,
+	"SI": 27,
+	"SK": 28,
+	"XI": 30,
+}
+
+var Categories = map[string]int{
+	"100_years_old":           288,
+	"accommodation":           262,
+	"agricultural_production": 261,
+	"bicycles_repair":         270,
+	"broadcasting_services":   256,
+	"ceramics":                283,
+	"children_car_seats":      250,
+	"clothing_repair":         272,
+	"cultural_events":         255,
+	"domestic_care":           273,
+	"enamels":                 284,
+	"foodstuffs":              246,
+	"hairdressing":            274,
+	"housing_provision":       258,
+	"impressions":             279,
+	"loan_libraries":          252,
+	"medical_care":            268,
+	"medical_equipment":       249,
+	"newspapers":              253,
+	"parking":                 572,
+	"periodicals":             254,
+	"pharmaceutical_products": 248,
+	"photographs":             285,
+	"pictures":                278,
+	"postage":                 286,
+	"private_dwellings":       259,
+	"region":                  574,
+	"restaurant":              263,
+	"sculpture_casts":         281,
+	"sculptures":              280,
+	"shoes_repair":            271,
+	"social_wellbeing":        266,
+	"sporting_events":         264,
+	"sporting_facilities":     265,
+	"street_cleaning":         269,
+	"super_temporary":         571,
+	"supply_electricity":      276,
+	"supply_gas":              275,
+	"supply_heating":          277,
+	"supply_water":            247,
+	"tapestries":              282,
+	"temporary":               573,
+	"transport_passengers":    251,
+	"undertakers_services":    267,
+	"window_cleaning":         260,
+	"writers_services":        257,
+	"zero_rate":               570,
+	"zero_reduced_rate":       569,
+	"zoological":              287,
 }
 
 func SplitCn(commodityCode string) []string {
@@ -168,7 +250,7 @@ func (tedb TEDB) VatSearchResult(criteria Criteria) ([]byte, error) {
 
 	values := req.URL.Query()
 	for _, countryCode := range criteria.CountryCodes {
-		ccId, ok := tedb.CountryCodes[countryCode]
+		ccId, ok := CountryCodes[countryCode]
 		if !ok {
 			return nil, fmt.Errorf("the country code \"%s\" is invalid", countryCode)
 		}
@@ -179,7 +261,7 @@ func (tedb TEDB) VatSearchResult(criteria Criteria) ([]byte, error) {
 	values.Add("dateTo", criteria.DateTo)
 
 	for _, category := range criteria.Categories {
-		if id, ok := tedb.Categories[category]; ok {
+		if id, ok := Categories[category]; ok {
 			values.Add("selectedCategories", strconv.Itoa(id))
 		}
 	}
@@ -277,90 +359,6 @@ func NewVatRetrievalService(cacheDir string, createCacheDir bool, debugOption ..
 	tedb := new(TEDB)
 
 	tedb.Url = "https://ec.europa.eu/taxation_customs/tedb"
-
-	tedb.CountryCodes = map[string]int{
-		"AT": 1,
-		"BE": 2,
-		"BG": 3,
-		"CY": 4,
-		"CZ": 5,
-		"DE": 6,
-		"DK": 7,
-		"EE": 8,
-		"EL": 9,
-		"ES": 10,
-		"FI": 11,
-		"FR": 12,
-		// "UK": 13,
-		"HR": 14,
-		"HU": 15,
-		"IE": 16,
-		"IT": 17,
-		"LT": 18,
-		"LU": 19,
-		"LV": 20,
-		"MT": 21,
-		"NL": 22,
-		"PL": 23,
-		"PT": 24,
-		"RO": 25,
-		"SE": 26,
-		"SI": 27,
-		"SK": 28,
-		"XI": 30,
-	}
-
-	tedb.Categories = map[string]int{
-		"100_years_old":           288,
-		"accommodation":           262,
-		"agricultural_production": 261,
-		"bicycles_repair":         270,
-		"broadcasting_services":   256,
-		"ceramics":                283,
-		"children_car_seats":      250,
-		"clothing_repair":         272,
-		"cultural_events":         255,
-		"domestic_care":           273,
-		"enamels":                 284,
-		"foodstuffs":              246,
-		"hairdressing":            274,
-		"housing_provision":       258,
-		"impressions":             279,
-		"loan_libraries":          252,
-		"medical_care":            268,
-		"medical_equipment":       249,
-		"newspapers":              253,
-		"parking":                 572,
-		"periodicals":             254,
-		"pharmaceutical_products": 248,
-		"photographs":             285,
-		"pictures":                278,
-		"postage":                 286,
-		"private_dwellings":       259,
-		"region":                  574,
-		"restaurant":              263,
-		"sculpture_casts":         281,
-		"sculptures":              280,
-		"shoes_repair":            271,
-		"social_wellbeing":        266,
-		"sporting_events":         264,
-		"sporting_facilities":     265,
-		"street_cleaning":         269,
-		"super_temporary":         571,
-		"supply_electricity":      276,
-		"supply_gas":              275,
-		"supply_heating":          277,
-		"supply_water":            247,
-		"tapestries":              282,
-		"temporary":               573,
-		"transport_passengers":    251,
-		"undertakers_services":    267,
-		"window_cleaning":         260,
-		"writers_services":        257,
-		"zero_rate":               570,
-		"zero_reduced_rate":       569,
-		"zoological":              287,
-	}
 
 	tedb.CacheDir = cacheDir
 	tedb.CreateCacheDir = createCacheDir
