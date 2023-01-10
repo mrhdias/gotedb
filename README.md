@@ -22,7 +22,11 @@ func main() {
     fmt.Println("Country Codes:", tedb.CountryCodes)
     fmt.Println("Categories:", tedb.Categories)
 
-    service := tedb.NewVatRetrievalService("./tedb_cache", true)
+    service := tedb.NewVatRetrievalService(
+        "./tedb_cache", // Cache directory
+        true,           // Create the cache directory if not exists
+        3               // Regenerate the cached files after 3 days
+    )
 
     currentTime := time.Now()
     
