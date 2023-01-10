@@ -24,10 +24,11 @@ func main() {
     currentTime := time.Now()
     
     criteria := tedb.Criteria{
-        CountryCodes: []string{"ES"},
-        DateFrom:     currentTime.AddDate(0, 0, -1).Format("2006/01/02"), // Optional - default today date -1 day
-        DateTo:       currentTime.Format("2006/01/02"), // Optional - default today date
-        CommodityCodes: []string{"33049900"},
+        CountryCodes:   []string{"ES"},
+        DateFrom:       currentTime.AddDate(0, 0, -1).Format("2006/01/02"), // Optional - default today date -1 day
+        DateTo:         currentTime.Format("2006/01/02"),                   // Optional - default today date
+        Categories:     []string{"foodstuffs"},  // Category(ies) - Optional
+        CommodityCodes: []string{"33049900"},    // CN Code(s) - Optional
     }
     records, err := service.VatSearch(criteria)
 
