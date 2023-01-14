@@ -2,7 +2,7 @@
 // Copyright 2023 The GoTeDB Authors. All rights reserved.
 // Use of this source code is governed by a MIT License
 // license that can be found in the LICENSE file.
-// Last Modification: 2023-01-10 22:09:39
+// Last Modification: 2023-01-14 22:36:33
 //
 
 package tedb
@@ -121,12 +121,20 @@ var Categories = map[string]int{
 	"zoological":              287,
 }
 
-func SplitCn(commodityCode string) []string {
-	parts := []string{commodityCode[0:4]}
+func SplitCn(commodityCode string) ([]string, error) {
+	// https://ec.europa.eu/taxation_customs/tedb/codes/CN_CODE/30.json
+	// chapter len(commodityCode) == 2
+	// heading len(commodityCode) == 4
+
+	if len(commodityCode) < 2 || len(commodityCode)%2 != 0 {
+		return nil, fmt.Errorf("the commodity code %s is incorrect", commodityCode)
+	}
 
 	if len(commodityCode) <= 4 {
-		return parts
+		return []string{commodityCode}, nil
 	}
+
+	parts := []string{commodityCode[0:4]}
 
 	remainder := commodityCode[4:]
 
@@ -138,19 +146,19 @@ func SplitCn(commodityCode string) []string {
 		parts = append(parts, remainder[even:])
 	}
 
-	return parts
+	return parts, nil
 }
 
 func (tedb TEDB) GetCnId(commodityCode string) (int, error) {
 
-	if len(commodityCode) < 4 {
-		return 0, fmt.Errorf("the commodity code %s is incorrect", commodityCode)
+	parts, err := SplitCn(commodityCode)
+	if err != nil {
+		return 0, err
 	}
 
-	heading := commodityCode[0:4]
-	code := strings.Join(SplitCn(commodityCode), " ")
+	code := strings.Join(parts, " ")
 
-	jsonFilename := fmt.Sprintf("%s.json", heading)
+	jsonFilename := fmt.Sprintf("%s.json", parts[0])
 
 	if tedb.CacheDir != "" {
 		jsonFilepath := filepath.Join(tedb.CacheDir, jsonFilename)
