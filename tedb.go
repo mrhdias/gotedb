@@ -2,7 +2,7 @@
 // Copyright 2023 The GoTeDB Authors. All rights reserved.
 // Use of this source code is governed by a MIT License
 // license that can be found in the LICENSE file.
-// Last Modification: 2023-01-15 12:06:31
+// Last Modification: 2023-01-15 20:50:46
 //
 
 package tedb
@@ -152,7 +152,7 @@ func SplitCn(commodityCode string) ([]string, error) {
 
 	cc := strings.ReplaceAll(commodityCode, " ", "")
 
-	if len(cc) < 2 || len(cc)%2 != 0 {
+	if len(cc) < 2 || len(cc) > 8 || len(cc)%2 != 0 {
 		return nil, fmt.Errorf("the commodity code \"%s\" is incorrect", commodityCode)
 	}
 
