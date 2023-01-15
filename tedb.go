@@ -2,7 +2,7 @@
 // Copyright 2023 The GoTeDB Authors. All rights reserved.
 // Use of this source code is governed by a MIT License
 // license that can be found in the LICENSE file.
-// Last Modification: 2023-01-15 11:11:19
+// Last Modification: 2023-01-15 12:06:31
 //
 
 package tedb
@@ -119,6 +119,26 @@ var Categories = map[string]int{
 	"zero_rate":               570,
 	"zero_reduced_rate":       569,
 	"zoological":              287,
+}
+
+type void struct{} // to make a set like in python
+
+func findDuplicates(elements []string) error {
+
+	if len(elements) < 2 {
+		return nil
+	}
+
+	set := map[string]void{}
+	for _, element := range elements {
+		e := strings.ToLower(strings.ReplaceAll(element, " ", ""))
+		if _, ok := set[e]; ok {
+			return fmt.Errorf("the element \"%s\" is duplicted", element)
+		}
+		set[e] = void{}
+	}
+
+	return nil
 }
 
 func SplitCn(commodityCode string) ([]string, error) {
@@ -369,6 +389,28 @@ func (tedb TEDB) VatSearch(criteria Criteria) ([]TEDBVatSearchResult, error) {
 	if df.After(dt) {
 		return nil, fmt.Errorf("date from \"%s\" is after date to \"%s\"",
 			criteria.DateFrom, criteria.DateTo)
+	}
+
+	/*
+		for _, field := range []string{"CountryCodes", "CommodityCodes", "Categories"} {
+			r := reflect.ValueOf(criteria)
+			values := reflect.Indirect(r).FieldByName(field).Interface().([]string)
+			if err := findDuplicates(values); err != nil {
+				return nil, err
+			}
+		}
+	*/
+
+	if err := findDuplicates(criteria.CountryCodes); err != nil {
+		return nil, err
+	}
+
+	if err := findDuplicates(criteria.CommodityCodes); err != nil {
+		return nil, err
+	}
+
+	if err := findDuplicates(criteria.Categories); err != nil {
+		return nil, err
 	}
 
 	result, err := tedb.VatSearchResult(criteria)
