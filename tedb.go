@@ -2,7 +2,7 @@
 // Copyright 2023 The GoTeDB Authors. All rights reserved.
 // Use of this source code is governed by a MIT License
 // license that can be found in the LICENSE file.
-// Last Modification: 2023-01-14 22:36:33
+// Last Modification: 2023-01-15 11:11:19
 //
 
 package tedb
@@ -126,17 +126,30 @@ func SplitCn(commodityCode string) ([]string, error) {
 	// chapter len(commodityCode) == 2
 	// heading len(commodityCode) == 4
 
-	if len(commodityCode) < 2 || len(commodityCode)%2 != 0 {
-		return nil, fmt.Errorf("the commodity code %s is incorrect", commodityCode)
+	if commodityCode == "" {
+		return nil, errors.New("the commodity code is empty")
 	}
 
-	if len(commodityCode) <= 4 {
-		return []string{commodityCode}, nil
+	cc := strings.ReplaceAll(commodityCode, " ", "")
+
+	if len(cc) < 2 || len(cc)%2 != 0 {
+		return nil, fmt.Errorf("the commodity code \"%s\" is incorrect", commodityCode)
 	}
 
-	parts := []string{commodityCode[0:4]}
+	if _, err := strconv.Atoi(cc); err != nil {
+		return nil, fmt.Errorf("the commodity code \"%s\" is incorrect, only numbers and separator spaces are allowed", commodityCode)
+	}
 
-	remainder := commodityCode[4:]
+	parts := []string{}
+
+	if len(cc) <= 4 {
+		// return only chapter if len(cc) == 2 heading or heading if len(cc) == 4
+		return append(parts, cc), nil
+	}
+
+	parts = append(parts, cc[0:4])
+
+	remainder := cc[4:]
 
 	even := int(len(remainder)/2) * 2
 	for i := 0; i < even; i += 2 {
@@ -144,6 +157,11 @@ func SplitCn(commodityCode string) ([]string, error) {
 	}
 	if even < len(remainder) {
 		parts = append(parts, remainder[even:])
+	}
+
+	if strings.ContainsAny(commodityCode, " ") &&
+		!strings.EqualFold(strings.Join(parts, " "), commodityCode) {
+		return nil, fmt.Errorf("the commodity code \"%s\" is not well formatted", commodityCode)
 	}
 
 	return parts, nil
@@ -159,7 +177,6 @@ func (tedb TEDB) GetCnId(commodityCode string) (int, error) {
 	code := strings.Join(parts, " ")
 
 	jsonFilename := fmt.Sprintf("%s.json", parts[0])
-
 	if tedb.CacheDir != "" {
 		jsonFilepath := filepath.Join(tedb.CacheDir, jsonFilename)
 		if fileStat, err := os.Stat(jsonFilepath); err == nil {
