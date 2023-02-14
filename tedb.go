@@ -2,7 +2,7 @@
 // Copyright 2023 The GoTeDB Authors. All rights reserved.
 // Use of this source code is governed by a MIT License
 // license that can be found in the LICENSE file.
-// Last Modification: 2023-01-15 20:50:46
+// Last Modification: 2023-02-14 10:38:39
 //
 
 package tedb
@@ -197,87 +197,103 @@ func (tedb TEDB) GetCnId(commodityCode string) (int, error) {
 	code := strings.Join(parts, " ")
 
 	jsonFilename := fmt.Sprintf("%s.json", parts[0])
-	if tedb.CacheDir != "" {
-		jsonFilepath := filepath.Join(tedb.CacheDir, jsonFilename)
-		if fileStat, err := os.Stat(jsonFilepath); err == nil {
-			if tedb.RegenerateAfter > 0 && int(time.Since(fileStat.ModTime()).Hours()/24) > tedb.RegenerateAfter {
+	jsonFilePath := filepath.Join(tedb.CacheDir, jsonFilename)
+
+	getFromCache, err := func() (bool, error) {
+		// if tedb.CacheDir == "" {
+		//	return false, nil
+		// }
+		if fileStat, err := os.Stat(jsonFilePath); err == nil {
+			if (tedb.RegenerateAfter > 0 &&
+				int(time.Since(fileStat.ModTime()).Hours()/24) > tedb.RegenerateAfter) ||
+				(fileStat.Size() == 0) {
 				// log.Printf("The %s file has been removed", jsonFilepath)
-				if err := os.Remove(jsonFilepath); err != nil {
-					return 0, err
+				if err := os.Remove(jsonFilePath); err != nil {
+					return false, err
 				}
-			} else {
+				return false, nil
+			}
+			return true, nil
+		}
+		return false, nil
+	}()
 
-				contentBytes, err := os.ReadFile(jsonFilepath)
-				if err != nil {
-					return 0, err
-				}
+	if err != nil {
+		return 0, err
+	}
 
-				var records []CodeRecord
+	contentBytes, err := func(fromFile bool) ([]byte, error) {
 
-				if err := json.Unmarshal([]byte(contentBytes), &records); err != nil {
-					return 0, err
-				}
+		if fromFile {
+			content, err := os.ReadFile(jsonFilePath)
+			if err != nil {
+				return nil, err
+			}
+			return content, nil
 
-				for _, record := range records {
-					if strings.EqualFold(record.Code, code) {
-						return record.ID, nil
+		}
+
+		url := fmt.Sprintf("%s/codes/CN_CODE/%s", tedb.Url, jsonFilename)
+
+		req, err := http.NewRequest("GET", url, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		// req.Header.Add("User-Agent", fmt.Sprintf("%s/%s", userAgent, version))
+
+		client := &http.Client{
+			Timeout: time.Duration(time.Duration(tedb.Timeout).Seconds()),
+		}
+
+		resp, err := client.Do(req)
+		if err != nil {
+			return nil, err
+		}
+
+		defer resp.Body.Close()
+
+		respContentBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, err
+		}
+
+		// fmt.Println("Content Body:", string(respContentBytes), resp.StatusCode)
+
+		if resp.StatusCode != http.StatusOK {
+			// fmt.Println("StatusCode:", resp.StatusCode)
+			return nil, fmt.Errorf("the server returned http status code %d when handling the HTTP request",
+				resp.StatusCode)
+		}
+
+		if len(respContentBytes) == 0 {
+			return nil, errors.New("the HTTP request did not return any content")
+		}
+
+		// cache json file
+		if tedb.CacheDir != "" {
+			if _, err := os.Stat(tedb.CacheDir); os.IsNotExist(err) {
+				if tedb.CreateCacheDir {
+					if err := os.Mkdir(tedb.CacheDir, 0755); err != nil {
+						return nil, err
 					}
 				}
-
-				return 0, nil
 			}
-		}
-	}
 
-	url := fmt.Sprintf("%s/codes/CN_CODE/%s", tedb.Url, jsonFilename)
-
-	req, err := http.NewRequest("GET", url, nil)
-	if err != nil {
-		return 0, err
-	}
-
-	// req.Header.Add("User-Agent", fmt.Sprintf("%s/%s", userAgent, version))
-
-	client := &http.Client{
-		Timeout: time.Duration(time.Duration(tedb.Timeout).Seconds()),
-	}
-
-	resp, err := client.Do(req)
-	if err != nil {
-		return 0, err
-	}
-
-	defer resp.Body.Close()
-
-	respContentBytes, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return 0, err
-	}
-
-	// fmt.Println("Content Body:", string(respContentBytes), resp.StatusCode)
-
-	if resp.StatusCode != 200 {
-		// fmt.Println("StatusCode:", resp.StatusCode)
-		return 0, fmt.Errorf("the server returned http status code %d when handling the HTTP request", resp.StatusCode)
-	}
-
-	// cache json file
-	if tedb.CacheDir != "" {
-		if _, err := os.Stat(tedb.CacheDir); os.IsNotExist(err) {
-			if tedb.CreateCacheDir {
-				if err := os.Mkdir(tedb.CacheDir, 0755); err != nil {
-					return 0, err
-				}
+			if err := os.WriteFile(filepath.Join(tedb.CacheDir, jsonFilename), respContentBytes, 0644); err != nil {
+				return nil, err
 			}
 		}
 
-		if err := os.WriteFile(filepath.Join(tedb.CacheDir, jsonFilename), respContentBytes, 0644); err != nil {
-			return 0, err
-		}
+		return respContentBytes, nil
+	}(getFromCache)
+
+	if err != nil {
+		return 0, err
 	}
 
 	var records []CodeRecord
-	if err := json.Unmarshal([]byte(respContentBytes), &records); err != nil {
+	if err := json.Unmarshal([]byte(contentBytes), &records); err != nil {
 		return 0, err
 	}
 
