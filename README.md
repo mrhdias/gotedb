@@ -27,7 +27,7 @@ func main() {
     service := tedb.NewVatRetrievalService(
         "./tedb_cache", // Cache directory
         true,           // Create the cache directory if not exists
-        3               // Regenerate the cached files after 3 days
+        3,              // Regenerate the cached files after 3 days
     )
 
     currentTime := time.Now()
@@ -36,8 +36,8 @@ func main() {
         CountryCodes:   []string{"ES"},
         DateFrom:       currentTime.AddDate(0, 0, -1).Format("2006/01/02"), // Optional - default today date -1 day
         DateTo:         currentTime.Format("2006/01/02"),                   // Optional - default today date
-        Categories:     []string{"foodstuffs"},                // Category(ies) - Optional
-        CommodityCodes: []string{"33049900", "0402 29 11"},    // Search by CN Codes (goods) - Optional
+        Categories:     []string{"foodstuffs"},             // Category(ies) - Optional
+        CommodityCodes: []string{"33049900", "0402 29 11"}, // Search by CN Codes (goods) - Optional
     }
     records, err := service.VatSearch(criteria)
 
