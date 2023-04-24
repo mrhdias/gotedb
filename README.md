@@ -48,7 +48,12 @@ func main() {
     for _, record := range records {
         fmt.Println("Country Code:", record.MemberState.DefaultCountryCode,
             "Type:", record.Type,
-            "Rate:", record.Rate.Value,
+            "Rate:", func() float64 {
+                if strings.Index(record.Comments, "temporary subject to a 0% VAT rate") != -1 {
+                    return 0.00
+                }
+                return record.Rate.Value
+            }(),
             "Comments:", record.Comments)
     }
 }
