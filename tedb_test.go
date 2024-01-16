@@ -1,8 +1,8 @@
 //
-// Copyright 2023 The GoTeDB Authors. All rights reserved.
+// Copyright 2024 The GoTeDB Authors. All rights reserved.
 // Use of this source code is governed by a MIT License
 // license that can be found in the LICENSE file.
-// Last Modification: 2023-02-17 22:37:59
+// Last Modification: 2024-01-16 12:20:43
 //
 
 package tedb
@@ -37,9 +37,9 @@ func TestTedb(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	want := 4
+	want := 3
 	if got := len(records); got != want {
-		t.Errorf("Records = %q, want %q", got, want)
+		t.Errorf("Records = %d, want %d", got, want)
 	}
 
 	if _, err := os.Stat(cacheDir); !os.IsNotExist(err) {
