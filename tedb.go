@@ -1,8 +1,8 @@
 //
-// Copyright 2023 The GoTeDB Authors. All rights reserved.
+// Copyright 2024 The GoTeDB Authors. All rights reserved.
 // Use of this source code is governed by a MIT License
 // license that can be found in the LICENSE file.
-// Last Modification: 2023-02-14 10:38:39
+// Last Modification: 2024-01-16 12:03:00
 //
 
 package tedb
@@ -157,7 +157,9 @@ func SplitCn(commodityCode string) ([]string, error) {
 	}
 
 	if _, err := strconv.Atoi(cc); err != nil {
-		return nil, fmt.Errorf("the commodity code \"%s\" is incorrect, only numbers and separator spaces are allowed", commodityCode)
+		return nil,
+			fmt.Errorf("the commodity code \"%s\" is incorrect, only numbers and separator spaces are allowed",
+				commodityCode)
 	}
 
 	parts := []string{}
@@ -185,6 +187,19 @@ func SplitCn(commodityCode string) ([]string, error) {
 	}
 
 	return parts, nil
+}
+
+func checkContentType(contentType string) error {
+	if contentType == "" {
+		return errors.New("is not set")
+	}
+
+	if !strings.EqualFold(strings.ToLower(strings.TrimSpace(strings.Split(contentType, ";")[0])),
+		"application/json") {
+		return errors.New("is not application/json")
+	}
+
+	return nil
 }
 
 func (tedb TEDB) GetCnId(commodityCode string) (int, error) {
@@ -252,6 +267,10 @@ func (tedb TEDB) GetCnId(commodityCode string) (int, error) {
 		}
 
 		defer resp.Body.Close()
+
+		if err := checkContentType(resp.Header.Get("Content-Type")); err != nil {
+			return nil, fmt.Errorf("the content-type header %v", err)
+		}
 
 		respContentBytes, err := io.ReadAll(resp.Body)
 		if err != nil {
@@ -364,6 +383,10 @@ func (tedb TEDB) VatSearchResult(criteria Criteria) ([]byte, error) {
 
 	defer resp.Body.Close()
 
+	if err := checkContentType(resp.Header.Get("Content-Type")); err != nil {
+		return nil, fmt.Errorf("the content-type header %v", err)
+	}
+
 	respContentBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
@@ -373,7 +396,7 @@ func (tedb TEDB) VatSearchResult(criteria Criteria) ([]byte, error) {
 		fmt.Println("Content Body Response:", string(respContentBytes), "Status Code:", resp.StatusCode)
 	}
 
-	if resp.StatusCode != 200 {
+	if resp.StatusCode != http.StatusOK {
 		// fmt.Println("StatusCode:", resp.StatusCode)
 		return nil, fmt.Errorf("the server returned http status code %d when handling the HTTP request", resp.StatusCode)
 	}
