@@ -8,6 +8,7 @@
 package tedb
 
 import (
+	"strings"
 	"testing"
 	"time"
 )
@@ -29,6 +30,11 @@ func TestTedb(t *testing.T) {
 
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	if !strings.EqualFold(criteria.CommodityCodes[0], "3304 99 00") {
+		t.Errorf("Standardized Commodity Code = %s, want %s",
+			criteria.CommodityCodes[0], "3304 99 00")
 	}
 
 	want := 2

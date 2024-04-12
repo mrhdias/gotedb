@@ -2,7 +2,7 @@
 // Copyright 2024 The GoTeDB Authors. All rights reserved.
 // Use of this source code is governed by a MIT License
 // license that can be found in the LICENSE file.
-// Last Modification: 2024-04-12 18:31:33
+// Last Modification: 2024-04-12 22:24:18
 //
 
 package tedb
@@ -208,12 +208,13 @@ func (tedb *TEDB) VatSearchQuery(criteria Criteria) (*TEDBsearchResult, error) {
 	}
 
 	selectedCnCodes := []string{}
-	for _, commodityCode := range criteria.CommodityCodes {
+	for idx, commodityCode := range criteria.CommodityCodes {
 		selectedCnCode, err := SplitCn(commodityCode)
 		if err != nil {
 			return nil, err
 		}
-		selectedCnCodes = append(selectedCnCodes, strings.Join(selectedCnCode, " "))
+		criteria.CommodityCodes[idx] = strings.Join(selectedCnCode, " ")
+		selectedCnCodes = append(selectedCnCodes, criteria.CommodityCodes[idx])
 	}
 
 	searchForm := TEDBsearchForm{
