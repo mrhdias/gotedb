@@ -1,5 +1,5 @@
 # GoTEDB
-VAT Search in TEDB ([Taxes in Europe Database v3](https://ec.europa.eu/taxation_customs/tedb/vatSearchForm.html)) using Golang
+VAT Search in TEDB ([Taxes in Europe Database v4](https://ec.europa.eu/taxation_customs/tedb/#/vat-search)) using Golang
 
 The query of goods commodity code can be done in the [TARIC Consultation](https://ec.europa.eu/taxation_customs/dds2/taric/taric_consultation.jsp) page.
 
@@ -24,11 +24,7 @@ func main() {
     fmt.Println("Country Codes:", tedb.CountryCodes)
     fmt.Println("Categories:", tedb.Categories)
 
-    service := tedb.NewVatRetrievalService(
-        "./tedb_cache", // Cache directory
-        true,           // Create the cache directory if not exists
-        3,              // Regenerate the cached files after 3 days
-    )
+    service := tedb.NewVatRetrievalService()
 
     currentTime := time.Now()
     
@@ -46,15 +42,19 @@ func main() {
     }
 
     for _, record := range records {
-        fmt.Println("Country Code:", record.MemberState.DefaultCountryCode,
+        fmt.Println("Country IsoCode:", record.IsoCode,
             "Type:", record.Type,
             "Rate:", func() float64 {
-                if strings.Index(record.Comments, "temporary subject to a 0% VAT rate") != -1 {
-                    return 0.00
+                if len(record.Rates) == 0 {
+                    return -1.00
                 }
-                return record.Rate.Value
-            }(),
-            "Comments:", record.Comments)
+                for _, rate := range record.Rates {
+                    if strings.Contains(rate.Comments, "temporary subject to a 0% VAT rate") {
+                        return 0.00
+                    }
+                }
+                return record.Rates[0].Value
+            }())
     }
 }
 ```

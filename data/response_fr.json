@@ -1,0 +1,424 @@
+{
+    "errors": null,
+    "initialSearch": {
+        "searchForm": {
+            "dateFrom": "2024/04/11",
+            "dateTo": "2024/04/12",
+            "selectedCategories": [],
+            "selectedMemberStates": [
+                "12"
+            ],
+            "selectedCnCodes": [
+                "3304 99 00",
+                "0402 29 11"
+            ],
+            "selectedCpaCodes": []
+        },
+        "selectedFacets": null,
+        "availableFacets": [
+            {
+                "id": "COUNTRIES",
+                "label": "tedb.lbl.searchform.memberState",
+                "facets": [
+                    {
+                        "id": "memberState-fr",
+                        "value": "fr",
+                        "countElements": 6,
+                        "type": "MEMBER_STATE",
+                        "label": "tedb.lbl.facet.memberState.fr",
+                        "groupId": "COUNTRIES",
+                        "children": null
+                    }
+                ]
+            },
+            {
+                "id": "SITUATION_HISTORICAL",
+                "label": "tedb.lbl.searchResult.situationon",
+                "facets": [
+                    {
+                        "id": "situationOn-01/01/2024",
+                        "value": "01/01/2024",
+                        "countElements": 6,
+                        "type": "DATE",
+                        "label": "01/01/2024",
+                        "groupId": "SITUATION_HISTORICAL",
+                        "children": null
+                    }
+                ]
+            },
+            {
+                "id": "CATEGORIES",
+                "label": "tedb.lbl.searchform.vat.categories",
+                "facets": [
+                    {
+                        "id": "category-FOODSTUFFS",
+                        "value": "FOODSTUFFS",
+                        "countElements": 1,
+                        "type": "CHECKBOXES",
+                        "label": "FOODSTUFFS",
+                        "groupId": "CATEGORIES",
+                        "children": null
+                    },
+                    {
+                        "id": "category-REGION",
+                        "value": "REGION",
+                        "countElements": 4,
+                        "type": "CHECKBOXES",
+                        "label": "REGION",
+                        "groupId": "CATEGORIES",
+                        "children": null
+                    }
+                ]
+            },
+            {
+                "id": "CN_CODES",
+                "label": "tedb.lbl.searchform.vat.cnCodes",
+                "facets": [
+                    {
+                        "id": "cn_codes-2",
+                        "value": "01",
+                        "countElements": 1,
+                        "type": "CHECKBOXES",
+                        "label": "01",
+                        "groupId": "CN_CODES",
+                        "children": null
+                    },
+                    {
+                        "id": "cn_codes-390",
+                        "value": "03",
+                        "countElements": 1,
+                        "type": "CHECKBOXES",
+                        "label": "03",
+                        "groupId": "CN_CODES",
+                        "children": null
+                    },
+                    {
+                        "id": "cn_codes-949",
+                        "value": "04",
+                        "countElements": 1,
+                        "type": "CHECKBOXES",
+                        "label": "04",
+                        "groupId": "CN_CODES",
+                        "children": null
+                    },
+                    {
+                        "id": "cn_codes-1156",
+                        "value": "05",
+                        "countElements": 1,
+                        "type": "CHECKBOXES",
+                        "label": "05",
+                        "groupId": "CN_CODES",
+                        "children": null
+                    },
+                    {
+                        "id": "cn_codes-1245",
+                        "value": "07",
+                        "countElements": 1,
+                        "type": "CHECKBOXES",
+                        "label": "07",
+                        "groupId": "CN_CODES",
+                        "children": null
+                    },
+                    {
+                        "id": "cn_codes-1616",
+                        "value": "10",
+                        "countElements": 1,
+                        "type": "CHECKBOXES",
+                        "label": "10",
+                        "groupId": "CN_CODES",
+                        "children": null
+                    },
+                    {
+                        "id": "cn_codes-1785",
+                        "value": "12",
+                        "countElements": 1,
+                        "type": "CHECKBOXES",
+                        "label": "12",
+                        "groupId": "CN_CODES",
+                        "children": null
+                    },
+                    {
+                        "id": "cn_codes-1889",
+                        "value": "1301",
+                        "countElements": 1,
+                        "type": "CHECKBOXES",
+                        "label": "1301",
+                        "groupId": "CN_CODES",
+                        "children": null
+                    },
+                    {
+                        "id": "cn_codes-1915",
+                        "value": "1404 90 00",
+                        "countElements": 1,
+                        "type": "CHECKBOXES",
+                        "label": "1404 90 00",
+                        "groupId": "CN_CODES",
+                        "children": null
+                    },
+                    {
+                        "id": "cn_codes-2231",
+                        "value": "17",
+                        "countElements": 1,
+                        "type": "CHECKBOXES",
+                        "label": "17",
+                        "groupId": "CN_CODES",
+                        "children": null
+                    },
+                    {
+                        "id": "cn_codes-3090",
+                        "value": "2308 00 40",
+                        "countElements": 1,
+                        "type": "CHECKBOXES",
+                        "label": "2308 00 40",
+                        "groupId": "CN_CODES",
+                        "children": null
+                    },
+                    {
+                        "id": "cn_codes-3124",
+                        "value": "2401 10",
+                        "countElements": 1,
+                        "type": "CHECKBOXES",
+                        "label": "2401 10",
+                        "groupId": "CN_CODES",
+                        "children": null
+                    },
+                    {
+                        "id": "cn_codes-5592",
+                        "value": "4403",
+                        "countElements": 1,
+                        "type": "CHECKBOXES",
+                        "label": "4403",
+                        "groupId": "CN_CODES",
+                        "children": null
+                    },
+                    {
+                        "id": "cn_codes-6203",
+                        "value": "5102",
+                        "countElements": 1,
+                        "type": "CHECKBOXES",
+                        "label": "5102",
+                        "groupId": "CN_CODES",
+                        "children": null
+                    },
+                    {
+                        "id": "cn_codes-6471",
+                        "value": "5305 00 00",
+                        "countElements": 1,
+                        "type": "CHECKBOXES",
+                        "label": "5305 00 00",
+                        "groupId": "CN_CODES",
+                        "children": null
+                    }
+                ]
+            },
+            {
+                "id": "CPA_CODES",
+                "label": "tedb.lbl.searchform.vat.cpaCodes",
+                "facets": []
+            }
+        ]
+    },
+    "result": [
+        {
+            "countryName": "France",
+            "isoCode": "FR",
+            "historized": null,
+            "type": "STANDARD",
+            "rates": [
+                {
+                    "key": null,
+                    "value": 20.0,
+                    "situationOn": "2024/01/01",
+                    "cnCodes": null,
+                    "cpaCodes": null,
+                    "category": null,
+                    "comments": "<p><a href=\"http://bofip.impots.gouv.fr/bofip/1379-PGP\" target=\"_blank\" rel=\"noopener noopener noreferrer noopener noreferrer noopener noreferrer noopener noreferrer noopener noreferrer noopener noreferrer noopener noreferrer noopener noreferrer noopener noreferrer noopener noreferrer noopener noreferrer noopener noreferrer noopener noreferrer noopener noreferrer noopener noreferrer noopener noreferrer noopener noreferrer noopener noreferrer\">http://bofip.impots.gouv.fr/bofip/1379-PGP</a></p>\r\n<p>Article 278 of the General Tax Code</p>"
+                }
+            ]
+        },
+        {
+            "countryName": "France",
+            "isoCode": "FR",
+            "historized": null,
+            "type": "REDUCED",
+            "rates": [
+                {
+                    "key": "Reduced rate",
+                    "value": 8.5,
+                    "situationOn": "2024/01/01",
+                    "cnCodes": null,
+                    "cpaCodes": null,
+                    "category": "Special reduced rate for specific regions (including Article 104 of the VAT Directive) ( Formerly restricted to: Special reduced rate for specific regions (including articles 104, 105 and 120 of the VAT Directive) )",
+                    "comments": "The standard VAT rate in Martinique, Guadeloupe and Réunion is 8.5%. The reduced rate is 2.1%."
+                },
+                {
+                    "key": "Reduced rate",
+                    "value": 0.9,
+                    "situationOn": "2024/01/01",
+                    "cnCodes": null,
+                    "cpaCodes": null,
+                    "category": "Special reduced rate for specific regions (including Article 104 of the VAT Directive) ( Formerly restricted to: Special reduced rate for specific regions (including articles 104, 105 and 120 of the VAT Directive) )",
+                    "comments": "For Corsica: 0.9% on sales of live animals to non-sujected to VAT entities, and on the first performances or circus."
+                },
+                {
+                    "key": "Reduced rate",
+                    "value": 1.05,
+                    "situationOn": "2024/01/01",
+                    "cnCodes": null,
+                    "cpaCodes": null,
+                    "category": "Special reduced rate for specific regions (including Article 104 of the VAT Directive) ( Formerly restricted to: Special reduced rate for specific regions (including articles 104, 105 and 120 of the VAT Directive) )",
+                    "comments": "The super reduced rate in Martinique, Guadeloupe and Réunion is 1.05% (for the press)."
+                },
+                {
+                    "key": "Reduced rate",
+                    "value": 5.5,
+                    "situationOn": "2024/01/01",
+                    "cnCodes": [
+                        {
+                            "id": 2,
+                            "code": "01",
+                            "description": "CHAPTER 1 - LIVE ANIMALS",
+                            "parentDescription": "SECTION I - LIVE ANIMALS; ANIMAL PRODUCTS / CHAPTER 1 - LIVE ANIMALS",
+                            "codeMatcher": null
+                        },
+                        {
+                            "id": 390,
+                            "code": "03",
+                            "description": "CHAPTER 3 - FISH AND CRUSTACEANS, MOLLUSCS AND OTHER AQUATIC INVERTEBRATES",
+                            "parentDescription": "SECTION I - LIVE ANIMALS; ANIMAL PRODUCTS / CHAPTER 3 - FISH AND CRUSTACEANS, MOLLUSCS AND OTHER AQUATIC INVERTEBRATES",
+                            "codeMatcher": null
+                        },
+                        {
+                            "id": 949,
+                            "code": "04",
+                            "description": "CHAPTER 4 - DAIRY PRODUCE; BIRDS' EGGS; NATURAL HONEY; EDIBLE PRODUCTS OF ANIMAL ORIGIN, NOT ELSEWHERE SPECIFIED OR INCLUDED",
+                            "parentDescription": "SECTION I - LIVE ANIMALS; ANIMAL PRODUCTS / CHAPTER 4 - DAIRY PRODUCE; BIRDS' EGGS; NATURAL HONEY; EDIBLE PRODUCTS OF ANIMAL ORIGIN, NOT ELSEWHERE SPECIFIED OR INCLUDED",
+                            "codeMatcher": {
+                                "id": 981,
+                                "code": "0402 29 11",
+                                "description": "Special milk, for infants, in hermetically sealed containers of a net content not exceeding 500 g, of a fat content, by weight, exceeding 10 %",
+                                "parentDescription": "SECTION I - LIVE ANIMALS; ANIMAL PRODUCTS / CHAPTER 4 - DAIRY PRODUCE; BIRDS' EGGS; NATURAL HONEY; EDIBLE PRODUCTS OF ANIMAL ORIGIN, NOT ELSEWHERE SPECIFIED OR INCLUDED / Milk and cream, concentrated or containing added sugar or other sweetening matter / Other / Special milk, for infants, in hermetically sealed containers of a net content not exceeding 500 g, of a fat content, by weight, exceeding 10 %",
+                                "codeMatcher": null
+                            }
+                        },
+                        {
+                            "id": 1156,
+                            "code": "05",
+                            "description": "CHAPTER 5 - PRODUCTS OF ANIMAL ORIGIN, NOT ELSEWHERE SPECIFIED OR INCLUDED",
+                            "parentDescription": "SECTION I - LIVE ANIMALS; ANIMAL PRODUCTS / CHAPTER 5 - PRODUCTS OF ANIMAL ORIGIN, NOT ELSEWHERE SPECIFIED OR INCLUDED",
+                            "codeMatcher": null
+                        },
+                        {
+                            "id": 1245,
+                            "code": "07",
+                            "description": "CHAPTER 7 - EDIBLE VEGETABLES AND CERTAIN ROOTS AND TUBERS",
+                            "parentDescription": "SECTION II - VEGETABLE PRODUCTS / CHAPTER 7 - EDIBLE VEGETABLES AND CERTAIN ROOTS AND TUBERS",
+                            "codeMatcher": null
+                        },
+                        {
+                            "id": 1616,
+                            "code": "10",
+                            "description": "CHAPTER 10 - CEREALS",
+                            "parentDescription": "SECTION II - VEGETABLE PRODUCTS / CHAPTER 10 - CEREALS",
+                            "codeMatcher": null
+                        },
+                        {
+                            "id": 1785,
+                            "code": "12",
+                            "description": "CHAPTER 12 - OIL SEEDS AND OLEAGINOUS FRUITS; MISCELLANEOUS GRAINS, SEEDS AND FRUIT; INDUSTRIAL OR MEDICINAL PLANTS; STRAW AND FODDER",
+                            "parentDescription": "SECTION II - VEGETABLE PRODUCTS / CHAPTER 12 - OIL SEEDS AND OLEAGINOUS FRUITS; MISCELLANEOUS GRAINS, SEEDS AND FRUIT; INDUSTRIAL OR MEDICINAL PLANTS; STRAW AND FODDER",
+                            "codeMatcher": null
+                        },
+                        {
+                            "id": 1889,
+                            "code": "1301",
+                            "description": "Lac; natural gums, resins, gum-resins and oleoresins (for example, balsams)",
+                            "parentDescription": "SECTION II - VEGETABLE PRODUCTS / CHAPTER 13 - LAC; GUMS, RESINS AND OTHER VEGETABLE SAPS AND EXTRACTS / Lac; natural gums, resins, gum-resins and oleoresins (for example, balsams)",
+                            "codeMatcher": null
+                        },
+                        {
+                            "id": 1915,
+                            "code": "1404 90 00",
+                            "description": "Other",
+                            "parentDescription": "SECTION II - VEGETABLE PRODUCTS / CHAPTER 14 - VEGETABLE PLAITING MATERIALS; VEGETABLE PRODUCTS NOT ELSEWHERE SPECIFIED OR INCLUDED / Vegetable products not elsewhere specified or included / Other",
+                            "codeMatcher": null
+                        },
+                        {
+                            "id": 2231,
+                            "code": "17",
+                            "description": "CHAPTER 17 - SUGARS AND SUGAR CONFECTIONERY",
+                            "parentDescription": "SECTION IV - PREPARED FOODSTUFFS; BEVERAGES, SPIRITS AND VINEGAR; TOBACCO AND MANUFACTURED TOBACCO SUBSTITUTES; PRODUCTS, WHETHER OR NOT CONTAINING NICOTINE, INTENDED FOR INHALATION WITHOUT COMBUSTION; OTHER NICOTINE CONTAINING PRODUCTS INTENDED FOR THE INTAKE OF NICOTINE INTO THE HUMAN BODY / CHAPTER 17 - SUGARS AND SUGAR CONFECTIONERY",
+                            "codeMatcher": null
+                        },
+                        {
+                            "id": 3090,
+                            "code": "2308 00 40",
+                            "description": "Acorns and horse-chestnuts; pomace or marc of fruit, other than grapes",
+                            "parentDescription": "SECTION IV - PREPARED FOODSTUFFS; BEVERAGES, SPIRITS AND VINEGAR; TOBACCO AND MANUFACTURED TOBACCO SUBSTITUTES; PRODUCTS, WHETHER OR NOT CONTAINING NICOTINE, INTENDED FOR INHALATION WITHOUT COMBUSTION; OTHER NICOTINE CONTAINING PRODUCTS INTENDED FOR THE INTAKE OF NICOTINE INTO THE HUMAN BODY / CHAPTER 23 - RESIDUES AND WASTE FROM THE FOOD INDUSTRIES; PREPARED ANIMAL FODDER / Vegetable materials and vegetable waste, vegetable residues and by-products, whether or not in the form of pellets, of a kind used in animal feeding, not elsewhere specified or included / Acorns and horse-chestnuts; pomace or marc of fruit, other than grapes",
+                            "codeMatcher": null
+                        },
+                        {
+                            "id": 3124,
+                            "code": "2401 10",
+                            "description": "Tobacco, not stemmed/stripped",
+                            "parentDescription": "SECTION IV - PREPARED FOODSTUFFS; BEVERAGES, SPIRITS AND VINEGAR; TOBACCO AND MANUFACTURED TOBACCO SUBSTITUTES; PRODUCTS, WHETHER OR NOT CONTAINING NICOTINE, INTENDED FOR INHALATION WITHOUT COMBUSTION; OTHER NICOTINE CONTAINING PRODUCTS INTENDED FOR THE INTAKE OF NICOTINE INTO THE HUMAN BODY / CHAPTER 24 - TOBACCO AND MANUFACTURED TOBACCO SUBSTITUTES; PRODUCTS, WHETHER OR NOT CONTAINING NICOTINE, INTENDED FOR INHALATION WITHOUT COMBUSTION; OTHER NICOTINE CONTAINING PRODUCTS INTENDED FOR THE INTAKE OF NICOTINE INTO THE HUMAN BODY / Unmanufactured tobacco; tobacco refuse / Tobacco, not stemmed/stripped",
+                            "codeMatcher": null
+                        },
+                        {
+                            "id": 5592,
+                            "code": "4403",
+                            "description": "Wood in the rough, whether or not stripped of bark or sapwood, or roughly squared",
+                            "parentDescription": "SECTION IX - WOOD AND ARTICLES OF WOOD; WOOD CHARCOAL; CORK AND ARTICLES OF CORK; MANUFACTURES OF STRAW, OF ESPARTO OR OF OTHER PLAITING MATERIALS; BASKETWARE AND WICKERWORK / CHAPTER 44 - WOOD AND ARTICLES OF WOOD; WOOD CHARCOAL / Wood in the rough, whether or not stripped of bark or sapwood, or roughly squared",
+                            "codeMatcher": null
+                        },
+                        {
+                            "id": 6203,
+                            "code": "5102",
+                            "description": "Fine or coarse animal hair, not carded or combed",
+                            "parentDescription": "SECTION XI - TEXTILES AND TEXTILE ARTICLES / CHAPTER 51 - WOOL, FINE OR COARSE ANIMAL HAIR; HORSEHAIR YARN AND WOVEN FABRIC / Fine or coarse animal hair, not carded or combed",
+                            "codeMatcher": null
+                        },
+                        {
+                            "id": 6471,
+                            "code": "5305 00 00",
+                            "description": "Coconut, abaca (Manila hemp or Musa textilis Nee), ramie and other vegetable textile fibres, not elsewhere specified or included, raw or processed but not spun; tow, noils and waste of these fibres (including yarn waste and garnetted stock)",
+                            "parentDescription": "SECTION XI - TEXTILES AND TEXTILE ARTICLES / CHAPTER 53 - OTHER VEGETABLE TEXTILE FIBRES; PAPER YARN AND WOVEN FABRICS OF PAPER YARN / Coconut, abaca (Manila hemp or Musa textilis Nee), ramie and other vegetable textile fibres, not elsewhere specified or included, raw or processed but not spun; tow, noils and waste of these fibres (including yarn waste and garnetted stock)",
+                            "codeMatcher": null
+                        }
+                    ],
+                    "cpaCodes": null,
+                    "category": "Foodstuffs (including beverages but excluding alcoholic beverages) for human and animal consumption; live animals, seeds, plants and ingredients normally intended for use in the preparation of foodstuffs; products normally used to supplement foodstuffs or as a substitute for foodstuffs",
+                    "comments": "Comments Products of agricultural, fishery, fish and poultry origin which have not undergone any processing and which are normally intended for use in agricultural production (article 278-0 bis A. 1°-0 bis of the general tax code). Excepted 0501 and 1704"
+                },
+                {
+                    "key": "Reduced rate",
+                    "value": 13.0,
+                    "situationOn": "2024/01/01",
+                    "cnCodes": null,
+                    "cpaCodes": null,
+                    "category": "Special reduced rate for specific regions (including Article 104 of the VAT Directive) ( Formerly restricted to: Special reduced rate for specific regions (including articles 104, 105 and 120 of the VAT Directive) )",
+                    "comments": "For Corsica: rate of 13% on oil products; 10% on construction works, sales on farm machinery, sales on eaten in products, etc.; 2.1% (reduced rate)."
+                }
+            ]
+        }
+    ],
+    "cnCodeNonCompliantMs": [],
+    "cpaCodeNonCompliantMs": [],
+    "cnCodes": [
+        {
+            "id": null,
+            "code": "3304 99 00",
+            "description": null,
+            "parentDescription": "SECTION VI - PRODUCTS OF THE CHEMICAL OR ALLIED INDUSTRIES / CHAPTER 33 - ESSENTIAL OILS AND RESINOIDS; PERFUMERY, COSMETIC OR TOILET PREPARATIONS / Beauty or make-up preparations and preparations for the care of the skin (other than medicaments), including sunscreen or suntan preparations; manicure or pedicure preparations / Other",
+            "codeMatcher": null
+        },
+        {
+            "id": null,
+            "code": "0402 29 11",
+            "description": null,
+            "parentDescription": "SECTION I - LIVE ANIMALS; ANIMAL PRODUCTS / CHAPTER 4 - DAIRY PRODUCE; BIRDS' EGGS; NATURAL HONEY; EDIBLE PRODUCTS OF ANIMAL ORIGIN, NOT ELSEWHERE SPECIFIED OR INCLUDED / Milk and cream, concentrated or containing added sugar or other sweetening matter / Other / Special milk, for infants, in hermetically sealed containers of a net content not exceeding 500 g, of a fat content, by weight, exceeding 10 %",
+            "codeMatcher": null
+        }
+    ],
+    "cpaCodes": []
+}

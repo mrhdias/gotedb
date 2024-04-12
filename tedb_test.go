@@ -8,19 +8,13 @@
 package tedb
 
 import (
-	"os"
 	"testing"
 	"time"
 )
 
 func TestTedb(t *testing.T) {
 
-	cacheDir := "./tedb_cache"
-	service := NewVatRetrievalService(
-		cacheDir,
-		true,
-		3,
-	)
+	service := NewVatRetrievalService()
 
 	currentTime := time.Now()
 
@@ -37,15 +31,13 @@ func TestTedb(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	want := 3
+	want := 2
 	if got := len(records); got != want {
 		t.Errorf("Records = %d, want %d", got, want)
 	}
 
-	if _, err := os.Stat(cacheDir); !os.IsNotExist(err) {
-		if err = os.RemoveAll(cacheDir); err != nil {
-			t.Fatal(err)
-		}
+	want = 2
+	if got := len(records[0].Rates); got != want {
+		t.Errorf("Rates = %d, want %d", got, want)
 	}
-
 }

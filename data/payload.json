@@ -1,0 +1,16 @@
+{
+    "searchForm": {
+        "selectedMemberStates": [
+            "10"
+        ],
+        "dateFrom": null,
+        "dateTo": "2024/04/12",
+        "selectedCategories": [],
+        "selectedCnCodes": [
+            "3304 99 00"
+        ],
+        "selectedCpaCodes": []
+    },
+    "availableFacets": null,
+    "selectedFacets": null
+}

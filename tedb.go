@@ -2,7 +2,7 @@
 // Copyright 2024 The GoTeDB Authors. All rights reserved.
 // Use of this source code is governed by a MIT License
 // license that can be found in the LICENSE file.
-// Last Modification: 2024-01-16 12:03:00
+// Last Modification: 2024-04-12 18:31:33
 //
 
 package tedb
@@ -13,20 +13,15 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
 )
 
 type TEDB struct {
-	Url             string
-	CacheDir        string
-	CreateCacheDir  bool
-	RegenerateAfter int
-	Timeout         int
-	Debug           bool
+	Url     string
+	Timeout int
+	Debug   bool
 }
 
 type Criteria struct {
@@ -189,188 +184,68 @@ func SplitCn(commodityCode string) ([]string, error) {
 	return parts, nil
 }
 
-func checkContentType(contentType string) error {
-	if contentType == "" {
-		return errors.New("is not set")
-	}
+func (tedb *TEDB) VatSearchQuery(criteria Criteria) (*TEDBsearchResult, error) {
 
-	if !strings.EqualFold(strings.ToLower(strings.TrimSpace(strings.Split(contentType, ";")[0])),
-		"application/json") {
-		return errors.New("is not application/json")
-	}
+	// "https://ec.europa.eu/taxation_customs/tedb/rest-api/vatSearch"
+	url := fmt.Sprintf("%s/rest-api/vatSearch", tedb.Url)
 
-	return nil
-}
-
-func (tedb TEDB) GetCnId(commodityCode string) (int, error) {
-
-	parts, err := SplitCn(commodityCode)
-	if err != nil {
-		return 0, err
-	}
-
-	code := strings.Join(parts, " ")
-
-	jsonFilename := fmt.Sprintf("%s.json", parts[0])
-	jsonFilePath := filepath.Join(tedb.CacheDir, jsonFilename)
-
-	getFromCache, err := func() (bool, error) {
-		// if tedb.CacheDir == "" {
-		//	return false, nil
-		// }
-		if fileStat, err := os.Stat(jsonFilePath); err == nil {
-			if (tedb.RegenerateAfter > 0 &&
-				int(time.Since(fileStat.ModTime()).Hours()/24) > tedb.RegenerateAfter) ||
-				(fileStat.Size() == 0) {
-				// log.Printf("The %s file has been removed", jsonFilepath)
-				if err := os.Remove(jsonFilePath); err != nil {
-					return false, err
-				}
-				return false, nil
-			}
-			return true, nil
-		}
-		return false, nil
-	}()
-
-	if err != nil {
-		return 0, err
-	}
-
-	contentBytes, err := func(fromFile bool) ([]byte, error) {
-
-		if fromFile {
-			content, err := os.ReadFile(jsonFilePath)
-			if err != nil {
-				return nil, err
-			}
-			return content, nil
-
-		}
-
-		url := fmt.Sprintf("%s/codes/CN_CODE/%s", tedb.Url, jsonFilename)
-
-		req, err := http.NewRequest("GET", url, nil)
-		if err != nil {
-			return nil, err
-		}
-
-		// req.Header.Add("User-Agent", fmt.Sprintf("%s/%s", userAgent, version))
-
-		client := &http.Client{
-			Timeout: time.Duration(time.Duration(tedb.Timeout).Seconds()),
-		}
-
-		resp, err := client.Do(req)
-		if err != nil {
-			return nil, err
-		}
-
-		defer resp.Body.Close()
-
-		if err := checkContentType(resp.Header.Get("Content-Type")); err != nil {
-			return nil, fmt.Errorf("the content-type header %v", err)
-		}
-
-		respContentBytes, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return nil, err
-		}
-
-		// fmt.Println("Content Body:", string(respContentBytes), resp.StatusCode)
-
-		if resp.StatusCode != http.StatusOK {
-			// fmt.Println("StatusCode:", resp.StatusCode)
-			return nil, fmt.Errorf("the server returned http status code %d when handling the HTTP request",
-				resp.StatusCode)
-		}
-
-		if len(respContentBytes) == 0 {
-			return nil, errors.New("the HTTP request did not return any content")
-		}
-
-		// cache json file
-		if tedb.CacheDir != "" {
-			if _, err := os.Stat(tedb.CacheDir); os.IsNotExist(err) {
-				if tedb.CreateCacheDir {
-					if err := os.Mkdir(tedb.CacheDir, 0755); err != nil {
-						return nil, err
-					}
-				}
-			}
-
-			if err := os.WriteFile(filepath.Join(tedb.CacheDir, jsonFilename), respContentBytes, 0644); err != nil {
-				return nil, err
-			}
-		}
-
-		return respContentBytes, nil
-	}(getFromCache)
-
-	if err != nil {
-		return 0, err
-	}
-
-	var records []CodeRecord
-	if err := json.Unmarshal([]byte(contentBytes), &records); err != nil {
-		return 0, err
-	}
-
-	for _, record := range records {
-		if strings.EqualFold(record.Code, code) {
-			return record.ID, nil
-		}
-	}
-
-	return 0, nil
-}
-
-func (tedb TEDB) VatSearchResult(criteria Criteria) ([]byte, error) {
-
-	url := fmt.Sprintf("%s/vatSearchResult.json", tedb.Url)
-
-	req, err := http.NewRequest("POST", url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	// req.Header.Add("User-Agent", fmt.Sprintf("%s/%s", userAgent, version))
-	req.Header.Add("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8")
-
-	values := req.URL.Query()
+	selectedMemberStates := []string{}
 	for _, countryCode := range criteria.CountryCodes {
 		ccId, ok := CountryCodes[countryCode]
 		if !ok {
 			return nil, fmt.Errorf("the country code \"%s\" is invalid", countryCode)
 		}
-		values.Add("selectedMemberStates", strconv.Itoa(ccId))
+		selectedMemberStates = append(selectedMemberStates, strconv.Itoa(ccId))
 	}
 
-	values.Add("dateFrom", criteria.DateFrom)
-	values.Add("dateTo", criteria.DateTo)
-
+	selectedCategories := []string{}
 	for _, category := range criteria.Categories {
-		if id, ok := Categories[category]; ok {
-			values.Add("selectedCategories", strconv.Itoa(id))
+		categoryCode, ok := Categories[category]
+		if !ok {
+			return nil, fmt.Errorf("the category \"%s\" is invalid", category)
 		}
+		selectedCategories = append(selectedCategories, strconv.Itoa(categoryCode))
 	}
 
+	selectedCnCodes := []string{}
 	for _, commodityCode := range criteria.CommodityCodes {
-		cnId, err := tedb.GetCnId(commodityCode)
+		selectedCnCode, err := SplitCn(commodityCode)
 		if err != nil {
 			return nil, err
 		}
-		if tedb.Debug {
-			fmt.Println("Commodity Code:", commodityCode, "CnId:", cnId)
-		}
-		values.Add("selectedCnCodes", strconv.Itoa(cnId))
+		selectedCnCodes = append(selectedCnCodes, strings.Join(selectedCnCode, " "))
 	}
 
-	req.URL.RawQuery = values.Encode()
+	searchForm := TEDBsearchForm{
+		SelectedMemberStates: selectedMemberStates,
+		DateFrom:             criteria.DateFrom,
+		DateTo:               criteria.DateTo,
+		SelectedCategories:   selectedCategories,
+		SelectedCnCodes:      selectedCnCodes,
+		SelectedCpaCodes:     []string{},
+	}
+
+	tedbSearch := TEDBSearch{
+		SearchForm: searchForm,
+	}
+
+	jsonPayload, err := json.Marshal(tedbSearch)
+	if err != nil {
+		return nil, err
+	}
 
 	if tedb.Debug {
-		fmt.Println("RawQuery:", req.URL.RawQuery)
+		fmt.Println("Json Payload:", string(jsonPayload))
 	}
+
+	jsonBody := strings.NewReader(string(jsonPayload))
+
+	req, err := http.NewRequest(http.MethodPost, url, jsonBody)
+	if err != nil {
+		return nil, err
+	}
+
+	req.Header.Add("Content-Type", "application/json")
 
 	client := &http.Client{
 		Timeout: time.Duration(time.Duration(tedb.Timeout).Seconds()),
@@ -382,10 +257,6 @@ func (tedb TEDB) VatSearchResult(criteria Criteria) ([]byte, error) {
 	}
 
 	defer resp.Body.Close()
-
-	if err := checkContentType(resp.Header.Get("Content-Type")); err != nil {
-		return nil, fmt.Errorf("the content-type header %v", err)
-	}
 
 	respContentBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
@@ -401,10 +272,34 @@ func (tedb TEDB) VatSearchResult(criteria Criteria) ([]byte, error) {
 		return nil, fmt.Errorf("the server returned http status code %d when handling the HTTP request", resp.StatusCode)
 	}
 
-	return respContentBytes, nil
+	if strings.EqualFold(string(respContentBytes), "{}") {
+		return nil, errors.New("the service did not return any results for the given criteria")
+	}
+
+	var records TEDBsearchResult
+	if err := json.Unmarshal(respContentBytes, &records); err != nil {
+		return nil, err
+	}
+
+	/*
+		for _, result := range records.Result {
+			for _, rate := range result.Rates {
+				fmt.Println("Rate Value:", rate.Value)
+				for _, cnCode := range rate.CnCodes {
+
+					fmt.Println("CnCode: ", cnCode.Code, cnCode.CodeMatcher, criteria.CommodityCodes)
+					if slices.Contains(criteria.CommodityCodes, cnCode.Code) {
+						fmt.Println("CnCode: ", cnCode.Code, cnCode.CodeMatcher)
+					}
+				}
+			}
+		}
+	*/
+
+	return &records, nil
 }
 
-func (tedb TEDB) VatSearch(criteria Criteria) ([]TEDBVatSearchResult, error) {
+func (tedb *TEDB) VatSearch(criteria Criteria) ([]TEDBSearchVatResult, error) {
 
 	if criteria.DateTo == "" {
 		currentTime := time.Now()
@@ -452,27 +347,61 @@ func (tedb TEDB) VatSearch(criteria Criteria) ([]TEDBVatSearchResult, error) {
 		return nil, err
 	}
 
-	result, err := tedb.VatSearchResult(criteria)
+	records, err := tedb.VatSearchQuery(criteria)
 	if err != nil {
 		return nil, err
 	}
 
-	if strings.EqualFold(string(result), "{}") {
-		return nil, errors.New("the service did not return any results for the given criteria")
+	if records.Errors != nil {
+		return nil, errors.New("the search result has an error")
 	}
 
-	var records []TEDBVatSearchResult
-	if err := json.Unmarshal([]byte(result), &records); err != nil {
-		return nil, err
+	/*
+		vatRate, err := func() (*float64, error) {
+			selectedValue, err := func() (*float64, error) {
+				if strings.EqualFold(records.Result[0].Type, "STANDARD") {
+					return &records.Result[0].Rates[0].Value, nil
+				}
+
+				return nil, errors.New("no standard rate value for the input criteria")
+			}()
+			if err != nil {
+				return nil, err
+			}
+
+			for _, result := range records.Result {
+				for _, rate := range result.Rates {
+
+					if strings.EqualFold(result.IsoCode, "ES") &&
+						strings.Contains(rate.Comments, "Canary Islands") {
+						fmt.Println("Skip:", rate.Comments)
+						continue
+					}
+
+					for _, cnCode := range rate.CnCodes {
+						for _, cCnCode := range criteria.CommodityCodes {
+							if strings.HasPrefix(cCnCode, cnCode.Code) {
+								fmt.Println("Rate by Specific CnCode:", rate.Value, cCnCode, cnCode.Code)
+								return &rate.Value, nil
+							}
+						}
+					}
+				}
+			}
+
+			return selectedValue, nil
+		}()
+		fmt.Println("Vat Rate:", *vatRate)
+	*/
+
+	if len(records.Result) == 0 {
+		return nil, errors.New("there are no results for the input criteria")
 	}
 
-	return records, err
+	return records.Result, err
 }
 
-func NewVatRetrievalService(cacheDir string,
-	createCacheDir bool,
-	regenerateAfter int,
-	debugOption ...bool) TEDB {
+func NewVatRetrievalService(debugOption ...bool) TEDB {
 
 	debug := false
 	if len(debugOption) == 1 {
@@ -483,9 +412,6 @@ func NewVatRetrievalService(cacheDir string,
 
 	tedb.Url = "https://ec.europa.eu/taxation_customs/tedb"
 
-	tedb.CacheDir = cacheDir
-	tedb.CreateCacheDir = createCacheDir
-	tedb.RegenerateAfter = regenerateAfter
 	tedb.Timeout = 60
 	tedb.Debug = debug
 

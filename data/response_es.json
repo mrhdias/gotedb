@@ -1,0 +1,113 @@
+{
+    "errors": null,
+    "initialSearch": {
+        "searchForm": {
+            "dateFrom": "2024/04/11",
+            "dateTo": "2024/04/12",
+            "selectedCategories": [],
+            "selectedMemberStates": [
+                "10"
+            ],
+            "selectedCnCodes": [
+                "3304 99 00",
+                "0402 29 11"
+            ],
+            "selectedCpaCodes": []
+        },
+        "selectedFacets": null,
+        "availableFacets": [
+            {
+                "id": "COUNTRIES",
+                "label": "tedb.lbl.searchform.memberState",
+                "facets": [
+                    {
+                        "id": "memberState-es",
+                        "value": "es",
+                        "countElements": 2,
+                        "type": "MEMBER_STATE",
+                        "label": "tedb.lbl.facet.memberState.es",
+                        "groupId": "COUNTRIES",
+                        "children": null
+                    }
+                ]
+            },
+            {
+                "id": "SITUATION_HISTORICAL",
+                "label": "tedb.lbl.searchResult.situationon",
+                "facets": [
+                    {
+                        "id": "situationOn-01/01/2024",
+                        "value": "01/01/2024",
+                        "countElements": 2,
+                        "type": "DATE",
+                        "label": "01/01/2024",
+                        "groupId": "SITUATION_HISTORICAL",
+                        "children": null
+                    }
+                ]
+            },
+            {
+                "id": "CATEGORIES",
+                "label": "tedb.lbl.searchform.vat.categories",
+                "facets": []
+            },
+            {
+                "id": "CN_CODES",
+                "label": "tedb.lbl.searchform.vat.cnCodes",
+                "facets": []
+            },
+            {
+                "id": "CPA_CODES",
+                "label": "tedb.lbl.searchform.vat.cpaCodes",
+                "facets": []
+            }
+        ]
+    },
+    "result": [
+        {
+            "countryName": "Spain",
+            "isoCode": "ES",
+            "historized": null,
+            "type": "STANDARD",
+            "rates": [
+                {
+                    "key": null,
+                    "value": 7.0,
+                    "situationOn": "2024/01/01",
+                    "cnCodes": null,
+                    "cpaCodes": null,
+                    "category": null,
+                    "comments": "VAT - Canary Islands - "
+                },
+                {
+                    "key": null,
+                    "value": 21.0,
+                    "situationOn": "2024/01/01",
+                    "cnCodes": null,
+                    "cpaCodes": null,
+                    "category": null,
+                    "comments": null
+                }
+            ]
+        }
+    ],
+    "cnCodeNonCompliantMs": [],
+    "cpaCodeNonCompliantMs": [],
+    "cnCodes": [
+        {
+            "id": null,
+            "code": "3304 99 00",
+            "description": null,
+            "parentDescription": "SECTION VI - PRODUCTS OF THE CHEMICAL OR ALLIED INDUSTRIES / CHAPTER 33 - ESSENTIAL OILS AND RESINOIDS; PERFUMERY, COSMETIC OR TOILET PREPARATIONS / Beauty or make-up preparations and preparations for the care of the skin (other than medicaments), including sunscreen or suntan preparations; manicure or pedicure preparations / Other",
+            "codeMatcher": null
+        },
+        {
+            "id": null,
+            "code": "0402 29 11",
+            "description": null,
+            "parentDescription": "SECTION I - LIVE ANIMALS; ANIMAL PRODUCTS / CHAPTER 4 - DAIRY PRODUCE; BIRDS' EGGS; NATURAL HONEY; EDIBLE PRODUCTS OF ANIMAL ORIGIN, NOT ELSEWHERE SPECIFIED OR INCLUDED / Milk and cream, concentrated or containing added sugar or other sweetening matter / Other / Special milk, for infants, in hermetically sealed containers of a net content not exceeding 500 g, of a fat content, by weight, exceeding 10 %",
+            "codeMatcher": null
+        }
+    ],
+    "cpaCodes": []
+}
